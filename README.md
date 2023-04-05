@@ -40,3 +40,6 @@ for el in elements:
     print(title, price, link)
     print()
 ```
+
+## Video Guide
+> https://youtu.be/_pCP8yQIgKQ
