@@ -56,6 +56,12 @@ class MechanicalScraper:
         if body:
             body_dict = parse_qs(body[0].strip())
 
+            if not body_dict:
+                try:
+                    body_dict = json.loads(body[0].strip().encode('utf-8'))
+                except:
+                    body_dict = {}
+
         method = 'GET' if start_line.startswith('GET') else 'POST' if start_line.startswith('POST') else '?'
         target = start_line.split(' ')[1]
 
@@ -107,7 +113,9 @@ response.raise_for_status()
 
         content_type = headers.get('Content-Type', '')
 
-        if 'application/x-www-form-urlencoded' in content_type:
+        if content_type == '':
+            data_str = json.dumps(body)
+        elif 'application/x-www-form-urlencoded' in content_type:
             data_str = json.dumps(body)
         elif 'application/json' in content_type:
             data_str = f"json.dumps({json.dumps(body)})"
@@ -143,6 +151,21 @@ response.raise_for_status()
         @return:
         """
         _response = self.session.get(url, **kwargs)
+
+        if use_sa:
+            self.sa_popup(_response.text)
+
+        return _response
+
+    def post(self, url, use_sa=False, **kwargs):
+        """
+        Send HTTP Request in POST method.
+        @param url:
+        @param use_sa: Whether or not to bring up the Selector Assistant
+        @param kwargs:
+        @return:
+        """
+        _response = self.session.post(url, **kwargs)
 
         if use_sa:
             self.sa_popup(_response.text)
@@ -241,7 +264,7 @@ if __name__ == '__main__':
     from tkinter import ttk
     from tkinter import messagebox
 
-    program_title = 'Mechanical Scraper v1.0'
+    program_title = 'Mechanical Scraper v1.1'
 
     root = tk.Tk()
     root.geometry('1000x700')
