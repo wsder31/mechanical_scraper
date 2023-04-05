@@ -1,5 +1,5 @@
 # Mechanical Scraper
-> Mechanical Scraper - Easy to Web Scraping  
+> Mechanical Scraper - Web Scraping Easily  
 > Make simple repetitive tasks convenient when developing a web scraping program.
 
 ## Generating Code for HTTP Request
