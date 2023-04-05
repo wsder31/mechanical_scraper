@@ -7,7 +7,7 @@
 ![image](https://user-images.githubusercontent.com/63570918/229982297-97abb684-30d2-4a05-98bf-a09ce3d28cfd.png)
 ![image](https://user-images.githubusercontent.com/63570918/229980797-7949bdca-49d0-4ce8-a749-15cb1ae225a9.png)
 
-## Select Assistant
+## Selector Assistant
 > A browser will automatically pop up about the http response. Then, you can easily copy css selectors via developer's tool.
 
 ```python
