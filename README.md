@@ -1,5 +1,6 @@
 # Mechanical Scraper
-> Mechanical Scraper - Easy to Web Scraping
+> Mechanical Scraper - Easy to Web Scraping  
+> Make simple repetitive tasks convenient when developing a web scraping program.
 
 ## Generating Code for HTTP Request
 > Just copy and paste the http message obtained through tools such as Fiddler to automatically generate a request code.  
