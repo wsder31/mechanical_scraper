@@ -1,8 +1,11 @@
 # Mechanical Scraper
-> Mechanical Scraper - Easy to Web Scraping
+> Mechanical Scraper - Web Scraping Easily  
+> Make simple repetitive tasks convenient when developing a web scraping program.
 
 ## Generating Code for HTTP Request
-> Just copy and paste the http message obtained through tools such as Fiddler to automatically generate a request code.
+> Just copy and paste the http message obtained through tools such as Fiddler to automatically generate a request code.  
+> Depending on the Content-Type, the appropriate code is automatically applied.  
+> Update the session automatically.
 
 ![image](https://user-images.githubusercontent.com/63570918/229982297-97abb684-30d2-4a05-98bf-a09ce3d28cfd.png)
 ![image](https://user-images.githubusercontent.com/63570918/229980797-7949bdca-49d0-4ce8-a749-15cb1ae225a9.png)
@@ -37,3 +40,6 @@ for el in elements:
     print(title, price, link)
     print()
 ```
+
+## Video Guide
+> https://youtu.be/_pCP8yQIgKQ
