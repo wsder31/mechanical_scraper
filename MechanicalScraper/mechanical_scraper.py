@@ -87,7 +87,7 @@ class MechanicalScraper:
 from mechanical_scraper import MechanicalScraper
 
 
-ms = MechanicalScraper()
+{self.instance_name} = MechanicalScraper()
 
 response = {self.instance_name}.get('{target}', headers={json.dumps(headers)})
 
@@ -133,7 +133,7 @@ response.raise_for_status()
 from mechanical_scraper import MechanicalScraper
 
 
-ms = MechanicalScraper()
+{self.instance_name} = MechanicalScraper()
 
 response = {self.instance_name}.post('{target}', data={data_str}{files_str}, headers={json.dumps(headers)})
 
