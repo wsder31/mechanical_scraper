@@ -138,7 +138,7 @@ response.raise_for_status()
         """
         Send HTTP Request in GET method.
         @param url:
-        @param use_sa: Whether or not to bring up the Select Assistant
+        @param use_sa: Whether or not to bring up the Selector Assistant
         @param kwargs:
         @return:
         """
@@ -149,9 +149,9 @@ response.raise_for_status()
 
         return _response
 
-    def sa_popup(self, input, filepath='./_select_assistant.html'):
+    def sa_popup(self, input, filepath='./_selector_assistant.html'):
         """
-        Brings up the Select Assistant window.
+        Brings up the Selector Assistant window.
         @param input: URL or Text/HTML
         @param filepath: File path to save locally
         @return:
