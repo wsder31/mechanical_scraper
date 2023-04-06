@@ -1,9 +1,9 @@
 import os
 import json
 import webbrowser
-import requests
+import requests     # pip install requests
 from urllib.parse import urlparse, parse_qs
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup   # pip install bs4
 
 
 class MechanicalScraper:
@@ -240,7 +240,7 @@ def example_naver_finance():
 if __name__ == '__main__':
     # example_naver_finance()
 
-    import black
+    import autopep8     # pip install autopep8
 
     def gen_code_from_gui():
         http_message = tb_raw_http_message.get(1.0, tk.END)
@@ -250,7 +250,7 @@ if __name__ == '__main__':
         code = ms.gen_code_request(http_message, including_headers=including_headers)
 
         if var_beautify.get():
-            code = black.format_str(code, mode=black.FileMode())
+            code = autopep8.fix_code(code, options={'aggressive': True})
 
         tb_code_result.delete(1.0, tk.END)
         tb_code_result.insert(tk.INSERT, code)
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     from tkinter import ttk
     from tkinter import messagebox
 
-    program_title = 'Mechanical Scraper v1.1'
+    program_title = 'Mechanical Scraper v1.2'
 
     root = tk.Tk()
     root.geometry('1000x700')
