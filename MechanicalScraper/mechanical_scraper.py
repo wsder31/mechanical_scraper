@@ -2,7 +2,7 @@ import os
 import json
 import webbrowser
 import requests     # pip install requests
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, parse_qsl
 from bs4 import BeautifulSoup   # pip install bs4
 
 
@@ -54,7 +54,7 @@ class MechanicalScraper:
         # Convert body to dictionary.
         body_dict = {}
         if body:
-            body_dict = parse_qs(body[0].strip())
+            body_dict = dict(parse_qsl(body[0].strip()))
 
             if not body_dict:
                 try:
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     from tkinter import ttk
     from tkinter import messagebox
 
-    program_title = 'Mechanical Scraper v1.2'
+    program_title = 'Mechanical Scraper v1.2.1'
 
     root = tk.Tk()
     root.geometry('1000x700')
