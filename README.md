@@ -42,4 +42,4 @@ for el in elements:
 ```
 
 ## Video Guide
-> https://youtu.be/_pCP8yQIgKQ
+> https://youtu.be/ft2bzuLVfPs
