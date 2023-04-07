@@ -43,3 +43,6 @@ for el in elements:
 
 ## Video Guide
 > https://youtu.be/ft2bzuLVfPs
+
+## Donation
+> [KakaoPay](https://qr.kakaopay.com/Ej9TdXTld138801559)
