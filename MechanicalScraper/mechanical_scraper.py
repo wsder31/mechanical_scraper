@@ -182,8 +182,12 @@ response.raise_for_status()
         if input.startswith('http'):
             webbrowser.get(self.browser).open(input)
         else:
+            if self.is_json_or_json_list(input):
+                filename, extension = os.path.splitext(filepath)
+                filepath = f"{filename}.json"
+
             with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(input)
+                f.write(self.beautify_json(input))
 
             webbrowser.get(self.browser).open('file://' + os.path.realpath(filepath))
 
@@ -214,6 +218,25 @@ response.raise_for_status()
 
         return _ret
 
+    def is_json_or_json_list(self, text):
+        try:
+            parsed_json = json.loads(text)
+            if isinstance(parsed_json, (list, dict)):
+                return True
+            else:
+                return False
+        except ValueError:
+            return False
+
+    def beautify_json(self, text, indent=4):
+        try:
+            if self.is_json_or_json_list(text):
+                return json.dumps(json.loads(text), indent=indent)
+            else:
+                return text
+        except ValueError:
+            return text
+
 
 def example_naver_finance():
     ms = MechanicalScraper()
@@ -237,10 +260,8 @@ def example_naver_finance():
         print()
 
 
-if __name__ == '__main__':
-    # example_naver_finance()
-
-    import autopep8     # pip install autopep8
+def gui():
+    import autopep8  # pip install autopep8
 
     def gen_code_from_gui():
         http_message = tb_raw_http_message.get(1.0, tk.END)
@@ -255,16 +276,14 @@ if __name__ == '__main__':
         tb_code_result.delete(1.0, tk.END)
         tb_code_result.insert(tk.INSERT, code)
 
-
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
-
 
     import tkinter as tk
     from tkinter import ttk
     from tkinter import messagebox
 
-    program_title = 'Mechanical Scraper v1.2.1'
+    program_title = 'Mechanical Scraper v1.3'
 
     root = tk.Tk()
     root.geometry('1000x700')
@@ -331,4 +350,9 @@ if __name__ == '__main__':
     help_menu.add_command(label="About", command=show_about)
 
     root.mainloop()
+
+
+if __name__ == '__main__':
+    # example_naver_finance()
+    gui()
 
