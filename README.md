@@ -12,7 +12,10 @@
 ![image](https://user-images.githubusercontent.com/63570918/229980797-7949bdca-49d0-4ce8-a749-15cb1ae225a9.png)
 
 ## Selector Assistant
-> A browser will automatically pop up about the http response. Then, you can easily copy css selectors via developer's tool.
+> A browser will automatically pop up about the http response. Then, you can easily copy css selectors via developer's tool.  
+> Find out hidden data automatically.
+
+![image](https://user-images.githubusercontent.com/63570918/233291044-eed25db1-a4bd-4054-a986-85d1514dc8e6.png)
 
 ```python
 from mechanical_scraper import MechanicalScraper
