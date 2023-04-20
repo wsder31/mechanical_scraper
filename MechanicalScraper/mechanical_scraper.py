@@ -4,6 +4,9 @@ import webbrowser
 import requests     # pip install requests
 from urllib.parse import urlparse, parse_qs, parse_qsl
 from bs4 import BeautifulSoup   # pip install bs4
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
 
 
 class MechanicalScraper:
@@ -13,6 +16,8 @@ class MechanicalScraper:
     base_url = None         # Base URL
 
     session = None          # Requests Session
+
+    parser_options = ['lxml', 'html.parser']   # Parser Options
 
     def __init__(self, browser='EDGE', instance_name='ms'):
         self.instance_name = instance_name
@@ -89,9 +94,11 @@ from mechanical_scraper import MechanicalScraper
 
 {self.instance_name} = MechanicalScraper()
 
-response = {self.instance_name}.get('{target}', headers={json.dumps(headers)})
+response = {self.instance_name}.get('{target}', True, headers={json.dumps(headers)})
 
 response.raise_for_status()
+
+bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
                 """.strip()
 
         return _ret
@@ -135,9 +142,11 @@ from mechanical_scraper import MechanicalScraper
 
 {self.instance_name} = MechanicalScraper()
 
-response = {self.instance_name}.post('{target}', data={data_str}{files_str}, headers={json.dumps(headers)})
+response = {self.instance_name}.post('{target}', True, data={data_str}{files_str}, headers={json.dumps(headers)})
 
 response.raise_for_status()
+
+bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
                 """.strip()
 
         return _ret
@@ -172,22 +181,52 @@ response.raise_for_status()
 
         return _response
 
-    def sa_popup(self, input, filepath='./_selector_assistant.html'):
+    def sa_hidden_data(self, html, parser):
+        ret = []
+
+        #region extract input_hidden data
+        bs = BeautifulSoup(html, parser)
+        ret.extend(bs.select('input[type="hidden"]'))
+        #endregion
+
+        ret = list(map(str, set(ret)))
+        return ret
+
+    def sa_popup(self, text, filepath='./_selector_assistant.html'):
         """
         Brings up the Selector Assistant window.
-        @param input: URL or Text/HTML
+        @param parser:
+        @param text: URL or Text/HTML
         @param filepath: File path to save locally
         @return:
         """
-        if input.startswith('http'):
-            webbrowser.get(self.browser).open(input)
+
+        if text.startswith('http'):
+            webbrowser.get(self.browser).open(text)
         else:
-            if self.is_json_or_json_list(input):
+            if self.is_json_or_json_list(text):
                 filename, extension = os.path.splitext(filepath)
                 filepath = f"{filename}.json"
+            else:
+                for parser in self.parser_options:
+                    hidden_data = self.sa_hidden_data(text, parser)
+
+                    if hidden_data:
+                        msg = f'[Mechanical Scraper] Hidden data found. (parser: {parser})\n\n'
+                        msg += '\n\n'.join(hidden_data)
+
+                        # region Append JavaScript code to HTML for alerting
+                        text += f'''
+                        <script>
+                        setTimeout(function () {{
+                            alert(`{msg}`);
+                        }}, 100);
+                        </script>
+                        '''
+                        # endregion
 
             with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(self.beautify_json(input))
+                f.write(self.beautify_json(text))
 
             webbrowser.get(self.browser).open('file://' + os.path.realpath(filepath))
 
@@ -249,7 +288,7 @@ def example_naver_finance():
     response = ms.get(url, headers=headers)
     response.raise_for_status()
 
-    bs = BeautifulSoup(response.text, 'html.parser')
+    bs = BeautifulSoup(response.text, 'lxml')
     elements = bs.select('#container > div.aside > div > div.aside_area.aside_popular > table > tbody > tr')
     for el in elements:
         title = el.select_one('th > a').text.strip()
@@ -260,15 +299,28 @@ def example_naver_finance():
         print()
 
 
+def example_google():
+    ms = MechanicalScraper()
+
+    response = ms.get(
+        'https://google.com',
+        True,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"})
+
+    response.raise_for_status()
+
+
 def gui():
     import autopep8  # pip install autopep8
+
+    ms = MechanicalScraper()
 
     def gen_code_from_gui():
         http_message = tb_raw_http_message.get(1.0, tk.END)
         including_headers = tb_including_headers.get(1.0, tk.END).replace(' ', '').strip().split(',')
 
-        ms = MechanicalScraper()
-        code = ms.gen_code_request(http_message, including_headers=including_headers)
+        code = ms.gen_code_request(http_message, including_headers=including_headers, parser=var_parser.get())
 
         if var_beautify.get():
             code = autopep8.fix_code(code, options={'aggressive': True})
@@ -279,11 +331,7 @@ def gui():
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
 
-    import tkinter as tk
-    from tkinter import ttk
-    from tkinter import messagebox
-
-    program_title = 'Mechanical Scraper v1.3'
+    program_title = 'Mechanical Scraper v2.0'
 
     root = tk.Tk()
     root.geometry('1000x700')
@@ -324,6 +372,12 @@ def gui():
     chk_beautify = tk.Checkbutton(frm_button, text="beautify", variable=var_beautify)
     chk_beautify.pack(side=tk.LEFT, padx=(0, 5))
 
+    parser_options = ms.parser_options
+    var_parser = tk.StringVar()
+    var_parser.set(parser_options[0])
+    drop_parser_options = tk.OptionMenu(frm_button, var_parser, *parser_options)
+    drop_parser_options.pack(side=tk.LEFT, padx=(0, 5))
+
     btn_gen_code_request = tk.Button(frm_button, text="Generate Code for Request", command=gen_code_from_gui)
     btn_gen_code_request.pack(side=tk.LEFT)
 
@@ -335,6 +389,9 @@ def gui():
 
     sb_code_result = tk.Scrollbar(tb_code_result)
     sb_code_result.pack(side=tk.RIGHT, fill=tk.Y)
+
+    tb_including_headers.config(yscrollcommand=sb_including_headers.set)
+    sb_including_headers.config(command=tb_including_headers.yview)
 
     tb_raw_http_message.config(yscrollcommand=sb_raw_http_message.set)
     sb_raw_http_message.config(command=tb_raw_http_message.yview)
@@ -354,5 +411,6 @@ def gui():
 
 if __name__ == '__main__':
     # example_naver_finance()
+    # example_google()
     gui()
 
