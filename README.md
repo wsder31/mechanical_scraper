@@ -15,7 +15,7 @@
 > A browser will automatically pop up about the http response. Then, you can easily copy css selectors via developer's tool.  
 > Find out hidden data automatically.
 
-![image](https://user-images.githubusercontent.com/63570918/233291044-eed25db1-a4bd-4054-a986-85d1514dc8e6.png)
+![image](https://user-images.githubusercontent.com/63570918/233291454-72383ace-f6dc-4edc-abf9-9311b0926d82.png)
 
 ```python
 from mechanical_scraper import MechanicalScraper
