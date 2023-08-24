@@ -1,12 +1,38 @@
 import os
 import json
 import webbrowser
+import urllib3
 import requests     # pip install requests
+from requests_html import HTMLSession   # pip install requests-html
 from urllib.parse import urlparse, parse_qs, parse_qsl
 from bs4 import BeautifulSoup   # pip install bs4
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import ssl
+
+
+class CustomHttpAdapter (requests.adapters.HTTPAdapter):
+    # "Transport adapter" that allows us to use custom ssl_context.
+
+    def __init__(self, ssl_context=None, **kwargs):
+        self.ssl_context = ssl_context
+        super().__init__(**kwargs)
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = urllib3.poolmanager.PoolManager(
+            num_pools=connections, maxsize=maxsize,
+            block=block, ssl_context=self.ssl_context)
+
+
+def get_legacy_session():
+    # SSL Error (UNSAFE_LEGACY_RENEGOTIATION_DISABLED) 발생시 조치 방법
+    # https://stackoverflow.com/questions/71603314/ssl-error-unsafe-legacy-renegotiation-disabled
+    ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+    session = requests.session()
+    session.mount('https://', CustomHttpAdapter(ctx))
+    return session
 
 
 class MechanicalScraper:
@@ -16,11 +42,13 @@ class MechanicalScraper:
     base_url = None         # Base URL
 
     session = None          # Requests Session
+    is_legacy_session = None
 
     parser_options = ['lxml', 'html.parser']   # Parser Options
 
-    def __init__(self, browser='EDGE', instance_name='ms'):
+    def __init__(self, browser='EDGE', instance_name='ms', is_legacy_session=False):
         self.instance_name = instance_name
+        self.is_legacy_session = is_legacy_session
 
         # Set default browser
         if 'EDGE' == browser.upper():
@@ -32,7 +60,12 @@ class MechanicalScraper:
             self.browser = 'chrome'
             webbrowser.register(self.browser, None, webbrowser.BackgroundBrowser(browser_path))
 
-        self.session = requests.Session()
+        if self.is_legacy_session:
+            ssl._create_default_https_context = ssl._create_unverified_context
+            self.session = get_legacy_session()
+        else:
+            self.session = requests.Session()
+            # self.session = HTMLSession()    # TODO: response.html.render() 이후에 sa_popup 띄우기 옵션
 
     def gen_code_request(self, http_message, **kwargs):
         """
@@ -87,12 +120,15 @@ class MechanicalScraper:
         @param kwargs:
         @return:
         """
+        parsed_url = urlparse(target)
+        base_url = parsed_url.scheme + "://" + parsed_url.hostname
 
         _ret = f"""
 from mechanical_scraper import MechanicalScraper
 
 
 {self.instance_name} = MechanicalScraper()
+{self.instance_name}.set_base_url('{base_url}')
 
 response = {self.instance_name}.get('{target}', True, headers={json.dumps(headers)})
 
@@ -136,11 +172,15 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
         else:
             raise Exception('Content-Type not yet supported. Please report the HTTP Message.')
 
+        parsed_url = urlparse(target)
+        base_url = parsed_url.scheme + "://" + parsed_url.hostname
+
         _ret = f"""
 from mechanical_scraper import MechanicalScraper
 
 
 {self.instance_name} = MechanicalScraper()
+{self.instance_name}.set_base_url('{base_url}')
 
 response = {self.instance_name}.post('{target}', True, data={data_str}{files_str}, headers={json.dumps(headers)})
 
@@ -331,7 +371,7 @@ def gui():
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
 
-    program_title = 'Mechanical Scraper v2.0'
+    program_title = 'Mechanical Scraper v3.0'
 
     root = tk.Tk()
     root.geometry('1000x700')
@@ -350,7 +390,7 @@ def gui():
     tb_including_headers.pack(side=tk.TOP, fill=tk.X)
 
     tb_including_headers.delete(1.0, tk.END)
-    tb_including_headers.insert(tk.INSERT, ', '.join(['referer', 'useragent', 'contenttype']))
+    tb_including_headers.insert(tk.INSERT, ', '.join(['referer', 'useragent', 'contenttype', 'acceptlanguage']))
 
     sb_including_headers = tk.Scrollbar(tb_including_headers)
     sb_including_headers.pack(side=tk.RIGHT, fill=tk.Y)
