@@ -177,6 +177,7 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
         base_url = parsed_url.scheme + "://" + parsed_url.hostname
 
         _ret = f"""
+from bs4 import BeautifulSoup
 from mechanical_scraper import MechanicalScraper
 
 
