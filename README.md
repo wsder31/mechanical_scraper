@@ -18,7 +18,7 @@
 ![image](https://user-images.githubusercontent.com/63570918/233291454-72383ace-f6dc-4edc-abf9-9311b0926d82.png)
 
 ```python
-from mechanical_scraper import MechanicalScraper
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
 
 
 ms = MechanicalScraper()
