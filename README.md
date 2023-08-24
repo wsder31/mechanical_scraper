@@ -45,6 +45,9 @@ for el in elements:
     print()
 ```
 
+## Installation
+```pip install git+https://github.com/wsder31/mechanical_scraper.git```
+
 ## Video Guide
 > https://youtu.be/ft2bzuLVfPs
 
