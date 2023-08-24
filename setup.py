@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'mechanical_scraper',
-    version = '3.2',
+    version = '3.1',
     description = 'Reduce your development time using this library based on requests and bs4.BeautifulSoup.',
     url = 'https://github.com/wsder31/mechanical_scraper.git',
     author = 'Silsako',
