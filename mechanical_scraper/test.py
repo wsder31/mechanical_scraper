@@ -1,4 +1,4 @@
-from mechanical_scraper import MechanicalScraper
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
 from bs4 import BeautifulSoup
 
 
