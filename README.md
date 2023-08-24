@@ -48,6 +48,9 @@ for el in elements:
 ## Installation
 ```pip install git+https://github.com/wsder31/mechanical_scraper.git```
 
+## Download Binary File (Windows only)
+> [v3.1](https://github.com/wsder31/mechanical_scraper/releases/tag/v3.1)
+
 ## Video Guide
 > https://youtu.be/ft2bzuLVfPs
 
