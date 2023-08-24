@@ -1,7 +1,7 @@
 # Mechanical Scraper
 > Mechanical Scraper - Web Scraping Easily  
 > Make simple repetitive tasks convenient when developing a web scraping program.  
-> Reduce your development time using requests and bs4.BeautifulSoup.
+> Reduce your development time using this library based on requests and bs4.BeautifulSoup.
 
 ## Generating Code for HTTP Request
 > Just copy and paste the http message obtained through tools such as Fiddler to automatically generate a request code.  
