@@ -6,6 +6,7 @@ import requests     # pip install requests
 from requests_html import HTMLSession   # pip install requests-html
 from urllib.parse import urlparse, parse_qs, parse_qsl
 from bs4 import BeautifulSoup   # pip install bs4
+import autopep8  # pip install autopep8
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -125,7 +126,7 @@ class MechanicalScraper:
 
         _ret = f"""
 from bs4 import BeautifulSoup
-from mechanical_scraper import MechanicalScraper
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
 
 
 {self.instance_name} = MechanicalScraper()
@@ -178,7 +179,7 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
 
         _ret = f"""
 from bs4 import BeautifulSoup
-from mechanical_scraper import MechanicalScraper
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
 
 
 {self.instance_name} = MechanicalScraper()
@@ -354,8 +355,6 @@ def example_google():
 
 
 def gui():
-    import autopep8  # pip install autopep8
-
     ms = MechanicalScraper()
 
     def gen_code_from_gui():
@@ -373,7 +372,7 @@ def gui():
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
 
-    program_title = 'Mechanical Scraper v3.0'
+    program_title = 'Mechanical Scraper v3.1'
 
     root = tk.Tk()
     root.geometry('1000x700')
