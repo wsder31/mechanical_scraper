@@ -106,6 +106,8 @@ class MechanicalScraper:
             method = 'GET'
         elif start_line.startswith('POST'):
             method = 'POST'
+        elif start_line.startswith('PATCH'):
+            method = 'PATCH'
         elif start_line.startswith('OPTIONS'):
             method = 'OPTIONS'
 
@@ -115,6 +117,8 @@ class MechanicalScraper:
             _ret = self.gen_code_get(target, headers_dict, **kwargs)
         elif 'POST' == method:
             _ret = self.gen_code_post(target, headers_dict, body_dict, **kwargs)
+        elif 'PATCH' == method:
+            _ret = self.gen_code_patch(target, headers_dict, body_dict, **kwargs)
         elif 'OPTIONS' == method:
             _ret = self.gen_code_options(target, headers_dict, body_dict, **kwargs)
         else:
@@ -203,6 +207,59 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
 
         return _ret
 
+    def gen_code_patch(self, target, headers, body, **kwargs):
+        """
+        Generates PATCH method request code.
+        @param target:
+        @param headers:
+        @param body:
+        @param kwargs:
+        @return:
+        """
+
+        _ret = ''
+
+        data_str = ''
+        files_str = ''
+
+        content_type = headers.get('Content-Type', '')
+
+        if content_type == '':
+            data_str = json.dumps(body)
+        elif 'application/x-www-form-urlencoded' in content_type:
+            data_str = json.dumps(body)
+        elif 'application/json' in content_type:
+            data_str = f"json.dumps({json.dumps(body)})"
+        elif 'application/octet-stream' in content_type:
+            data_str = f"b'{body}'"
+        elif 'multipart/form-data' in content_type:
+            data_str = f"json.dumps({json.dumps(body)})"
+            files_str = ", files={'file': open('file.txt', 'rb')}"
+        elif 'text' in content_type:
+            data_str = body
+        else:
+            raise Exception('Content-Type not yet supported. Please report the HTTP Message.')
+
+        parsed_url = urlparse(target)
+        base_url = parsed_url.scheme + "://" + parsed_url.hostname
+
+        _ret = f"""
+from bs4 import BeautifulSoup
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
+
+
+{self.instance_name} = MechanicalScraper()
+{self.instance_name}.set_base_url('{base_url}')
+
+response = {self.instance_name}.patch('{target}', True, data={data_str}{files_str}, headers={json.dumps(headers)})
+
+response.raise_for_status()
+
+bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
+                """.strip()
+
+        return _ret
+
     def gen_code_options(self, target, headers={}, **kwargs):
         """
         Generates the request code of the OPTIONS method.
@@ -255,6 +312,21 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
         @return:
         """
         _response = self.session.post(url, **kwargs)
+
+        if use_sa:
+            self.sa_popup(_response.text)
+
+        return _response
+
+    def patch(self, url, use_sa=False, **kwargs):
+        """
+        Send HTTP Request in PATCH method.
+        @param url:
+        @param use_sa: Whether or not to bring up the Selector Assistant
+        @param kwargs:
+        @return:
+        """
+        _response = self.session.patch(url, **kwargs)
 
         if use_sa:
             self.sa_popup(_response.text)
