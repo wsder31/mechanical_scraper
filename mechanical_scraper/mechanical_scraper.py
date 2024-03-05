@@ -101,13 +101,22 @@ class MechanicalScraper:
                 except:
                     body_dict = {}
 
-        method = 'GET' if start_line.startswith('GET') else 'POST' if start_line.startswith('POST') else '?'
+        method = '?'
+        if start_line.startswith('GET'):
+            method = 'GET'
+        elif start_line.startswith('POST'):
+            method = 'POST'
+        elif start_line.startswith('OPTIONS'):
+            method = 'OPTIONS'
+
         target = start_line.split(' ')[1]
 
         if 'GET' == method:
             _ret = self.gen_code_get(target, headers_dict, **kwargs)
         elif 'POST' == method:
             _ret = self.gen_code_post(target, headers_dict, body_dict, **kwargs)
+        elif 'OPTIONS' == method:
+            _ret = self.gen_code_options(target, headers_dict, body_dict, **kwargs)
         else:
             raise Exception('Only GET and POST methods are supported.')
 
@@ -194,6 +203,34 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
 
         return _ret
 
+    def gen_code_options(self, target, headers={}, **kwargs):
+        """
+        Generates the request code of the OPTIONS method.
+        @param target:
+        @param headers:
+        @param kwargs:
+        @return:
+        """
+        parsed_url = urlparse(target)
+        base_url = parsed_url.scheme + "://" + parsed_url.hostname
+
+        _ret = f"""
+from bs4 import BeautifulSoup
+from mechanical_scraper.mechanical_scraper import MechanicalScraper
+
+
+{self.instance_name} = MechanicalScraper()
+{self.instance_name}.set_base_url('{base_url}')
+
+response = {self.instance_name}.options('{target}', True, headers={json.dumps(headers)})
+
+response.raise_for_status()
+
+bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
+                """.strip()
+
+        return _ret
+
     def get(self, url, use_sa=False, **kwargs):
         """
         Send HTTP Request in GET method.
@@ -218,6 +255,21 @@ bs = BeautifulSoup(response.text, '{kwargs["parser"]}')
         @return:
         """
         _response = self.session.post(url, **kwargs)
+
+        if use_sa:
+            self.sa_popup(_response.text)
+
+        return _response
+
+    def options(self, url, use_sa=False, **kwargs):
+        """
+        Send HTTP Request in OPTIONS method.
+        @param url:
+        @param use_sa: Whether or not to bring up the Selector Assistant
+        @param kwargs:
+        @return:
+        """
+        _response = self.session.options(url, **kwargs)
 
         if use_sa:
             self.sa_popup(_response.text)
