@@ -496,7 +496,7 @@ def gui():
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
 
-    program_title = 'Mechanical Scraper v3.1'
+    program_title = 'Mechanical Scraper v3.2'
 
     root = tk.Tk()
     root.geometry('1000x700')
