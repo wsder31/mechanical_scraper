@@ -496,7 +496,7 @@ def gui():
     def show_about():
         messagebox.showinfo(program_title, "http://silsako.com\nhttps://github.com/wsder31/mechanical_scraper\nsilsako@naver.com\nhttps://open.kakao.com/o/smMmbgV")
 
-    program_title = 'Mechanical Scraper v3.2'
+    program_title = 'Mechanical Scraper v3.2.1'
 
     root = tk.Tk()
     root.geometry('1000x700')
@@ -533,7 +533,7 @@ def gui():
     frm_button.pack(side=tk.TOP, pady=5)
 
     var_beautify = tk.IntVar()
-    var_beautify.set(1)
+    var_beautify.set(0)
     chk_beautify = tk.Checkbutton(frm_button, text="beautify", variable=var_beautify)
     chk_beautify.pack(side=tk.LEFT, padx=(0, 5))
 
