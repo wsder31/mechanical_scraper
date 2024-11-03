@@ -52,7 +52,7 @@ for el in elements:
 ```pip install --force-reinstall git+https://github.com/wsder31/mechanical_scraper.git```
 
 ## Download Binary File (Windows only)
-> [v3.2](https://github.com/wsder31/mechanical_scraper/releases/tag/v3.2)
+> [v3.2.1](https://github.com/wsder31/mechanical_scraper/releases/tag/v3.2.1)
 
 ## Video Guide
 > https://youtu.be/ft2bzuLVfPs
